@@ -23,7 +23,6 @@ LuxeStore is designed to showcase products from the Fake Store API in an elegant
 - Language: TypeScript
 - Styling: Tailwind CSS
 - Data Fetching & Caching: TanStack Query (React Query)
-- Form Validation: Zod & React Hook Form
 - Icons: Lucide React & Material Symbols Outlined
 - Component Architecture: React 19
 
@@ -76,7 +75,6 @@ LuxeStore is designed to showcase products from the Fake Store API in an elegant
 ### lib Directory
 
 - api.ts: Centralized API service for interacting with the Fake Store API.
-- validations/: Contains Zod schemas for form validation (e.g., newsletter signup).
 
 ## Getting Started
 
