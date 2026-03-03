@@ -24,30 +24,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProductDetailsPage({ params }: Props) {
   const { id } = await params;
-  let product;
-  let isError = false;
+  let product = null;
 
   try {
     product = await api.getProductById(Number(id));
-  } catch {
-    isError = true;
+  } catch (error) {
+    console.error(`Server-side fetch for product ${id} failed:`, error);
   }
 
-  if (isError || !product) {
-    return (
-      <main className="flex-1 flex flex-col items-center justify-center p-8 bg-slate-50">
-        <ErrorState
-          title={!product ? "Product Not Found" : "Failed to load product"}
-          description={
-            !product
-              ? "The product you're looking for doesn't exist or has been removed."
-              : "We're having trouble connecting. Please check your connection and try again."
-          }
-          statusLink="/"
-        />
-      </main>
-    );
-  }
-
-  return <ProductDetailClient product={product} />;
+  return <ProductDetailClient product={product} productId={Number(id)} />;
 }

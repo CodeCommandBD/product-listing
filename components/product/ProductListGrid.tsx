@@ -42,17 +42,20 @@ export default function ProductListGrid({ initialProducts, initialCategories }: 
     });
   }, []);
 
-  // Use TanStack Query with initialData to avoid refetch on mount
-  const { data: products = initialProducts } = useQuery({
+  // Use TanStack Query with initialData to avoid refetch on mount if data exists
+  const { data: products = initialProducts, isLoading: isLoadingProducts } = useQuery({
     queryKey: ["products"],
     queryFn: api.getProducts,
-    initialData: initialProducts,
+    initialData: initialProducts.length > 0 ? initialProducts : undefined,
+    // If no initial data (server failed), fetch on client
+    enabled: true, 
   });
 
-  const { data: categories = initialCategories } = useQuery({
+  const { data: categories = initialCategories, isLoading: isLoadingCategories } = useQuery({
     queryKey: ["categories"],
     queryFn: api.getCategories,
-    initialData: initialCategories,
+    initialData: initialCategories.length > 0 ? initialCategories : undefined,
+    enabled: true,
   });
 
   // Use the custom hook for all filter/sort/pagination logic

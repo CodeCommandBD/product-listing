@@ -4,10 +4,13 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import StarRating from "@/components/ui/StarRating";
-import { type Product } from "@/lib/api";
+import { type Product, api } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
+import ErrorState from "@/components/ui/ErrorState";
 
 interface Props {
-  product: Product;
+  product: Product | null;
+  productId: number;
 }
 
 function ProductDetailSkeleton() {
@@ -74,8 +77,16 @@ function ProductDetailSkeleton() {
   );
 }
 
-export default function ProductDetailClient({ product }: Props) {
+export default function ProductDetailClient({ product: initialProduct, productId }: Props) {
   const [isMounted, setIsMounted] = useState(false);
+
+  // Client-side fetch if server failed (e.g. 403 on Vercel)
+  const { data: product = initialProduct, isLoading, isError } = useQuery({
+    queryKey: ["product", productId],
+    queryFn: () => api.getProductById(productId),
+    initialData: initialProduct || undefined,
+    enabled: true,
+  });
 
   useEffect(() => {
     // Wait for icon font to load before showing real content
@@ -84,8 +95,20 @@ export default function ProductDetailClient({ product }: Props) {
     });
   }, []);
 
-  if (!isMounted) {
+  if (!isMounted || (isLoading && !product)) {
     return <ProductDetailSkeleton />;
+  }
+
+  if (isError || !product) {
+    return (
+      <main className="flex-1 flex flex-col items-center justify-center p-8 bg-slate-50 min-h-[60vh]">
+        <ErrorState
+          title="Product Not Found"
+          description="We couldn't retrieve the product details. Please try again later."
+          statusLink="/"
+        />
+      </main>
+    );
   }
 
   return (
