@@ -13,16 +13,44 @@ export interface Product {
   };
 }
 
-async function fetchWithCache<T>(url: string, revalidate: number = 300): Promise<T> {
-  const res = await fetch(url, {
-    headers: {
-      "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-    },
-    next: { revalidate }, // Cache for `revalidate` seconds (Next.js ISR)
-  });
-  if (!res.ok) throw new Error(`API error: ${res.status}`);
-  return res.json();
+async function fetchWithCache<T>(
+  url: string,
+  revalidate: number = 300,
+  retries: number = 2
+): Promise<T> {
+  const headers = {
+    "User-Agent":
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+    Accept: "application/json, text/plain, */*",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Cache-Control": "no-cache",
+    Pragma: "no-cache",
+    Referer: "https://fakestoreapi.com/",
+  };
+
+  try {
+    const res = await fetch(url, {
+      headers,
+      next: { revalidate },
+    });
+
+    if (res.status === 403 || res.status === 429) {
+      if (retries > 0) {
+        // Exponential backoff: wait a bit before retrying
+        const delay = (3 - retries) * 1000;
+        await new Promise((resolve) => setTimeout(resolve, delay));
+        return fetchWithCache<T>(url, revalidate, retries - 1);
+      }
+    }
+
+    if (!res.ok) throw new Error(`API error: ${res.status}`);
+    return res.json();
+  } catch (error) {
+    if (retries > 0) {
+      return fetchWithCache<T>(url, revalidate, retries - 1);
+    }
+    throw error;
+  }
 }
 
 export const api = {
