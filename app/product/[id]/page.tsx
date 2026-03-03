@@ -3,6 +3,8 @@ import ErrorState from "@/components/ui/ErrorState";
 import ProductDetailClient from "@/components/product/ProductDetailClient";
 import { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 interface Props {
   params: Promise<{ id: string }>;
 }
