@@ -1,34 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { newsletterSchema, type NewsletterFormData } from "@/lib/validations/newsletter";
-import { useState } from "react";
-
 export default function Footer() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<NewsletterFormData>({
-    resolver: zodResolver(newsletterSchema),
-  });
-
-  const onSubmit = async (data: NewsletterFormData) => {
-    setIsSubmitting(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    console.log("Newsletter Subscription Data:", data);
-    setIsSubmitting(false);
-    setIsSuccess(true);
-    reset();
-    setTimeout(() => setIsSuccess(false), 5000);
-  };
-
   return (
     <>
       <footer className="bg-slate-100 py-16 px-6 md:px-8 border-t border-slate-200 mt-auto pb-24 md:pb-16 font-display">
@@ -52,8 +24,8 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Links Grid */}
-          <div className="md:col-span-4 grid grid-cols-2 gap-8">
+          {/* Links Grid - Expanded */}
+          <div className="md:col-span-8 grid grid-cols-2 sm:grid-cols-4 gap-8">
             <div className="flex flex-col gap-4">
               <h4 className="font-black text-[10px] uppercase tracking-widest text-slate-400">
                 Collections
@@ -82,44 +54,34 @@ export default function Footer() {
                 Returns Policy
               </a>
             </div>
-          </div>
-
-          {/* Newsletter Section */}
-          <div className="md:col-span-4 flex flex-col gap-6 bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
-            <div>
-              <h4 className="font-black text-lg tracking-tight text-slate-900">JOIN THE CIRCLE</h4>
-              <p className="text-xs font-medium text-slate-500 mt-1">Receive early access to limited edition drops.</p>
+            <div className="flex flex-col gap-4">
+              <h4 className="font-black text-[10px] uppercase tracking-widest text-slate-400">
+                Company
+              </h4>
+              <a className="text-sm font-bold text-slate-600 hover:text-primary transition-colors" href="#">
+                About Us
+              </a>
+              <a className="text-sm font-bold text-slate-600 hover:text-primary transition-colors" href="#">
+                Sustainability
+              </a>
+              <a className="text-sm font-bold text-slate-600 hover:text-primary transition-colors" href="#">
+                Press
+              </a>
             </div>
-
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
-              <div className="relative">
-                <input
-                  {...register("email")}
-                  type="text"
-                  placeholder="name@exclusive.com"
-                  className={`w-full px-4 py-3 bg-slate-50 border ${
-                    errors.email ? "border-red-500" : "border-slate-200"
-                  } rounded-xl text-sm font-bold focus:outline-none focus:border-primary transition-all`}
-                />
-                {errors.email && (
-                  <p className="text-[10px] text-red-500 font-bold mt-1.5 uppercase tracking-wide">
-                    {errors.email.message}
-                  </p>
-                )}
-              </div>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-slate-900 text-white font-black uppercase text-[10px] tracking-widest py-3 rounded-xl hover:bg-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
-              >
-                {isSubmitting ? "Processing..." : isSuccess ? "Accepted" : "Subscribe Now"}
-              </button>
-              {isSuccess && (
-                <p className="text-[10px] text-green-600 font-bold text-center uppercase tracking-widest mt-1">
-                  Welcome to the LuxeStore Circle.
-                </p>
-              )}
-            </form>
+            <div className="flex flex-col gap-4">
+              <h4 className="font-black text-[10px] uppercase tracking-widest text-slate-400">
+                Legal
+              </h4>
+              <a className="text-sm font-bold text-slate-600 hover:text-primary transition-colors" href="#">
+                Privacy Policy
+              </a>
+              <a className="text-sm font-bold text-slate-600 hover:text-primary transition-colors" href="#">
+                Terms of Service
+              </a>
+              <a className="text-sm font-bold text-slate-600 hover:text-primary transition-colors" href="#">
+                Cookie Policy
+              </a>
+            </div>
           </div>
         </div>
 
