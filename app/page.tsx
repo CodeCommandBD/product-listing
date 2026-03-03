@@ -1,6 +1,8 @@
 import ProductListGrid from "@/components/product/ProductListGrid";
 import { api } from "@/lib/api";
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   // Fetch initial data on the server to enable loading.tsx skeletons
   const [initialProducts, initialCategories] = await Promise.all([
